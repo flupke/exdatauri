@@ -1,4 +1,4 @@
-defmodule Exdatauri.Mixfile do
+defmodule ExDataURI.Mixfile do
   use Mix.Project
 
   def project do
