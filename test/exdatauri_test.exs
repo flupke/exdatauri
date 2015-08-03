@@ -24,4 +24,12 @@ defmodule ExDataURITest do
   test "explicit charset, no mediatype" do
     assert ExDataURI.parse(<<"data:charset=iso-8859-15,", 233>>) == {:ok, "text/plain", "é"}
   end
+
+  test "unsupported mediatype parameters" do
+    assert {:error, _} = ExDataURI.parse("data:text/plain;foo=bar,foo")
+  end
+
+  test "invalid payload for charset" do
+    assert {:error, _} = ExDataURI.parse("data:charset=utf8,%E9")
+  end
 end
