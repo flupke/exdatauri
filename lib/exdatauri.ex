@@ -50,23 +50,45 @@ defmodule ExDataURI do
     end
   end
 
+  defp parse_mediatype("") do
+    {:ok, "text/plain", nil}
+  end
   defp parse_mediatype(mediatype) do
     if String.contains?(mediatype, ";") do
       [mediatype | parameters] = String.split(mediatype, ";")
-      parameters = parameters
-                   |> Enum.map(fn(param) ->
-                       [name, value] = String.split(param, "=", parts: 2)
-                       {name, value}
-                     end)
-                   |> Enum.into(%{})
-      {charset, rest} = Map.pop(parameters, "charset")
-      if rest == %{} do
-        {:ok, mediatype, charset}
-      else
-        {:error, "unsupported mediatype parameters in RFC 2397 URI: #{inspect Map.keys(rest)}"}
+      case parse_charset(parameters) do
+        {:ok, charset} ->
+          {:ok, mediatype, charset}
+        {:error, reason} ->
+          {:error, reason}
       end
     else
-      {:ok, mediatype, nil}
+      if String.contains?(mediatype, "/") do
+        {:ok, mediatype, nil}
+      else
+        parameters = String.split(mediatype, ";")
+        case parse_charset(parameters) do
+          {:ok, charset} ->
+            {:ok, "text/plain", charset}
+          {:error, reason} ->
+            {:error, reason}
+        end
+      end
+    end
+  end
+
+  defp parse_charset(parameters) do
+    parameters = parameters
+                 |> Enum.map(fn(param) ->
+                     [name, value] = String.split(param, "=", parts: 2)
+                     {name, value}
+                   end)
+                 |> Enum.into(%{})
+    {charset, rest} = Map.pop(parameters, "charset")
+    if rest == %{} do
+      {:ok, charset}
+    else
+      {:error, "unsupported mediatype parameters in RFC 2397 URI: #{inspect Map.keys(rest)}"}
     end
   end
 
