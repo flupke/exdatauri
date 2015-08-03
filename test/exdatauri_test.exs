@@ -1,5 +1,5 @@
 defmodule ExDataURITest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   test "base64" do
     assert ExDataURI.parse("data:image/gif;base64,#{Base.encode64 "foo"}") == {:ok, "image/gif", "foo"}
@@ -31,5 +31,25 @@ defmodule ExDataURITest do
 
   test "invalid payload for charset" do
     assert {:error, _} = ExDataURI.parse("data:charset=utf8,%E9")
+  end
+
+  test "default encode parameters" do
+    assert ExDataURI.encode("foo") == {:ok, "data:text/plain;base64,Zm9v"}
+    assert ExDataURI.encode("é") == {:ok, "data:text/plain;base64,w6k="}
+  end
+
+  test "all encode parameters" do
+    assert ExDataURI.encode("é", "image/gif", "latin1", :urlenc, "utf8") ==
+      {:ok, "data:image/gif;charset=latin1,%E9"}
+    assert ExDataURI.encode("é", "image/gif", "utf8", :urlenc, "utf8") ==
+      {:ok, "data:image/gif;charset=utf8,%C3%A9"}
+  end
+
+  test "invalid encode charset conversion" do
+    assert {:error, _} = ExDataURI.encode(<<233>>, "text/plain", "latin1", :urlenc, "utf8")
+  end
+
+  test "invalid payload encoding" do
+    assert {:error, _} = ExDataURI.encode("foo", "text/plain", "utf8", :unknown)
   end
 end

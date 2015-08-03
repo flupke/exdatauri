@@ -6,9 +6,65 @@ defmodule ExDataURI do
   """
 
   @doc """
+  Create a RFC 2397 URI.
+
+  `payload_encoding` may be `:base64` or `:urlenc`.
+
+  `charset` may be any charset supported by iconv, or `nil`. If it's `nil`, the
+  payload is stored as-is (the default); if it's not, use iconv to convert
+  payload from `input_charset` to `charset`.
+
+  Return values:
+    * `{:ok, uri}`
+    * `{:error, reason}`
+  """
+  def encode(payload,
+             mediatype \\ "text/plain",
+             charset \\ nil,
+             payload_encoding \\ :base64,
+             input_charset \\ "utf8") do
+    error = nil
+
+    case charset do
+      nil ->
+        charset_meta = ""
+      ^input_charset ->
+        charset_meta = ";charset=#{charset}"
+      charset ->
+        case :iconverl.conv(charset, input_charset, payload) do
+          {:ok, payload} ->
+            payload = payload
+            charset_meta = ";charset=#{charset}"
+          {:error, reason} ->
+            error = {:error, "failed encoding payload from #{inspect input_charset} to #{inspect charset}: #{inspect reason}"}
+        end
+    end
+
+    unless error do
+      case payload_encoding do
+        :base64 ->
+          payload_meta = ";base64"
+          payload = Base.encode64(payload)
+        :urlenc ->
+          payload_meta = ""
+          payload = URI.encode(payload)
+        unknonw_enc ->
+          error = {:error, "unknown payload encoding: #{inspect payload_encoding}"}
+      end
+    end
+
+    case error do
+      nil ->
+        {:ok, "data:#{mediatype}#{charset_meta}#{payload_meta},#{payload}"}
+      error ->
+        error
+    end
+  end
+
+  @doc """
   Parse RFC 2397 `uri`.
 
-  Return `{:ok, mediatype_type, data}`, or `{:error, reason}`.
+  Return `{:ok, mediatype, data}`, or `{:error, reason}`.
   """
   def parse("data:" <> data) do
     if String.contains?(data, ",") do

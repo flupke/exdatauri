@@ -1,12 +1,12 @@
 ExDataURI
 =========
 
-An Elixir decoder and encoder for RFC 2397 URIs.
+An Elixir parser and encoder for RFC 2397 URIs.
 
 Usage:
 ```
-iex> ExDataURI.decode("data:text/plain;base64,Zm9v")
+iex> ExDataURI.parse("data:text/plain;base64,Zm9v")
 {:ok, "text/plain", "foo"}
-iex> ExDataURI.encode("text/plain", "foo")
-"data:text/plain;base64,Zm9v"
+iex> ExDataURI.encode("text/plain", "foo", :base64)
+{:ok, "data:text/plain;base64,Zm9v"}
 ```
