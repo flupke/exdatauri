@@ -2,12 +2,15 @@ defmodule ExDataURI.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :exdatauri,
-     version: "0.0.1",
-     elixir: "~> 1.0",
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     deps: deps]
+    [
+      app: :exdatauri,
+      version: "0.0.1",
+      elixir: "~> 1.0",
+      build_embedded: Mix.env == :prod,
+      start_permanent: Mix.env == :prod,
+      deps: deps,
+      test_coverage: [tool: ExCoveralls],
+    ]
   end
 
   # Configuration for the OTP application
@@ -28,7 +31,9 @@ defmodule ExDataURI.Mixfile do
   # Type `mix help deps` for more examples and options
   defp deps do
     [
-      {:iconverl, github: "edescourtis/iconverl", tag: "3.0.17"}
+      {:iconverl, github: "edescourtis/iconverl", tag: "3.0.17"},
+
+      {:excoveralls, "~> 0.3", only: :test},
     ]
   end
 end
