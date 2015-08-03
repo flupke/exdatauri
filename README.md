@@ -7,6 +7,6 @@ Usage:
 ```
 iex> ExDataURI.parse("data:text/plain;base64,Zm9v")
 {:ok, "text/plain", "foo"}
-iex> ExDataURI.encode("text/plain", "foo", :base64)
+iex> ExDataURI.encode("foo")
 {:ok, "data:text/plain;base64,Zm9v"}
 ```
