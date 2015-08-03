@@ -27,6 +27,8 @@ defmodule ExDataURI.Mixfile do
   #
   # Type `mix help deps` for more examples and options
   defp deps do
-    []
+    [
+      {:iconverl, github: "edescourtis/iconverl", tag: "3.0.17"}
+    ]
   end
 end
