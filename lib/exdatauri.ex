@@ -41,9 +41,6 @@ defmodule ExDataURI do
     end
     case parse_mediatype(metadata) do
       {:ok, mediatype, charset} ->
-        if mediatype == "" do
-          mediatype = "text/plain"
-        end
         {mediatype, charset, payload_encoding}
       {:error, reason} ->
         {:error, reason}
