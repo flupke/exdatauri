@@ -12,3 +12,5 @@ iex> ExDataURI.parse("data:text/plain;base64,Zm9v")
 iex> ExDataURI.encode("foo")
 {:ok, "data:text/plain;base64,Zm9v"}
 ```
+
+Reference documentation is available at [hexdocs.pm](http://hexdocs.pm/exdatauri/)
