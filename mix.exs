@@ -35,6 +35,7 @@ defmodule ExDataURI.Mixfile do
 
       {:earmark, "~> 0.1", only: :dev},
       {:ex_doc, "~> 0.7", only: :dev},
+      {:dialyze, "~> 0.2.0", only: :dev},
 
       {:excoveralls, "~> 0.3", only: :test},
     ]
