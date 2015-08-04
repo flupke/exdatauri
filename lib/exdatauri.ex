@@ -1,8 +1,14 @@
 defmodule ExDataURI do
   @moduledoc """
-  Encode and decode RFC 2397 URIs.
+  An Elixir parser and encoder for RFC 2397 URIs.
 
-  `data:[<mediatype>][;base64],<data>`
+  Usage:
+  ```
+  iex> ExDataURI.parse("data:text/plain;base64,Zm9v")
+  {:ok, "text/plain", "foo"}
+  iex> ExDataURI.encode("foo")
+  {:ok, "data:text/plain;base64,Zm9v"}
+  ```
   """
 
   @doc """
@@ -18,6 +24,7 @@ defmodule ExDataURI do
     * `{:ok, uri}`
     * `{:error, reason}`
   """
+  @spec encode(bitstring, String.t, bitstring, atom, String.t) :: {atom, String.t}
   def encode(payload,
              mediatype \\ "text/plain",
              charset \\ nil,
@@ -48,7 +55,7 @@ defmodule ExDataURI do
         :urlenc ->
           payload_meta = ""
           payload = URI.encode(payload)
-        unknonw_enc ->
+        _unknonw_enc ->
           error = {:error, "unknown payload encoding: #{inspect payload_encoding}"}
       end
     end
@@ -64,8 +71,12 @@ defmodule ExDataURI do
   @doc """
   Parse RFC 2397 `uri`.
 
-  Return `{:ok, mediatype, data}`, or `{:error, reason}`.
+  Return values:
+    * `{:ok, mediatype, data}` - where `mediatype` is the one given in the
+      metadata, or "text/plain" if it's omitted;
+    * `{:error, reason}`
   """
+  @spec parse(String.t) :: {atom, String.t}
   def parse("data:" <> data) do
     if String.contains?(data, ",") do
       [metadata, payload] = String.split(data, ",", parts: 2)
