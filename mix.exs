@@ -5,11 +5,13 @@ defmodule ExDataURI.Mixfile do
     [
       app: :exdatauri,
       version: "0.0.1",
+      description: "A RFC 2397 URI parser for Elixir",
       elixir: "~> 1.0",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
       deps: deps,
       test_coverage: [tool: ExCoveralls],
+      package: package,
     ]
   end
 
@@ -38,6 +40,14 @@ defmodule ExDataURI.Mixfile do
       {:dialyze, "~> 0.2.0", only: :dev},
 
       {:excoveralls, "~> 0.3", only: :test},
+    ]
+  end
+
+  defp package do
+    [
+      contributors: ["Luper Rouch"],
+      licenses: ["MIT"],
+      links: %{"Github" => "https://github.com/flupke/exdatauri"},
     ]
   end
 end
