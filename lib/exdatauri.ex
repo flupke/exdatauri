@@ -24,7 +24,7 @@ defmodule ExDataURI do
     * `{:ok, uri}`
     * `{:error, reason}`
   """
-  @spec encode(bitstring, String.t, bitstring, atom, String.t) :: {atom, String.t}
+  @spec encode(bitstring, String.t, String.t | nil, :base64 | :urlenc, String.t) :: {:ok | :error, String.t}
   def encode(payload,
              mediatype \\ "text/plain",
              charset \\ nil,
@@ -76,7 +76,7 @@ defmodule ExDataURI do
       metadata, or "text/plain" if it's omitted;
     * `{:error, reason}`
   """
-  @spec parse(String.t) :: {atom, String.t}
+  @spec parse(String.t) :: {:ok | :error, String.t}
   def parse("data:" <> data) do
     if String.contains?(data, ",") do
       [metadata, payload] = String.split(data, ",", parts: 2)
