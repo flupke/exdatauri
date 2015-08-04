@@ -1,6 +1,8 @@
 ExDataURI
 =========
 
+[![Build Status](https://travis-ci.org/flupke/exdatauri.svg?branch=master)](https://travis-ci.org/flupke/exdatauri) [![Coverage Status](https://coveralls.io/repos/flupke/exdatauri/badge.svg?branch=master&service=github)](https://coveralls.io/github/flupke/exdatauri?branch=master)
+
 An Elixir parser and encoder for RFC 2397 URIs.
 
 Usage:
