@@ -36,7 +36,7 @@ defmodule ExDataURI.Mixfile do
       {:iconverl, github: "edescourtis/iconverl", tag: "3.0.17"},
 
       {:earmark, "~> 0.1", only: :dev},
-      {:ex_doc, "~> 0.7", only: :dev},
+      {:ex_doc, "~> 0.8", only: :dev},
       {:dialyze, "~> 0.2.0", only: :dev},
 
       {:excoveralls, "~> 0.3", only: :test},
