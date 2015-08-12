@@ -73,7 +73,7 @@ defmodule ExDataURI do
 
   Return values:
     * `{:ok, mediatype, data}` - where `mediatype` is the one given in the
-      metadata, or "text/plain" if it's omitted;
+      metadata, or `"text/plain"` if it's omitted;
     * `{:error, reason}`
   """
   @spec parse(String.t) :: {:ok | :error, String.t}
@@ -103,9 +103,12 @@ defmodule ExDataURI do
   Only parse metadata of an RFC 2397 URI.
 
   Return values:
-    * `{:ok, mediatype, charset, payload_encoding}`
+    * `{:ok, mediatype, charset, payload_encoding}` - where `mediatype` is the
+      MIME type (`"text/plain"` by default), `charset` the encoding of the
+      payload or `nil`, and `payload_encoding` is one of `:urlenc` or `:base64`
     * `{:error, reason}`
   """
+  @spec parse_metadata(String.t) :: {:ok, String.t, String.t | nil, :atom} | {:error, String.t}
   def parse_metadata("data:" <> rest) do
     [metadata, _payload] = String.split(rest, ",", parts: 2)
     parse_metadata(metadata)
