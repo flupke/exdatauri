@@ -4,7 +4,7 @@ defmodule ExDataURI.Mixfile do
   def project do
     [
       app: :exdatauri,
-      version: "0.0.1",
+      version: "0.1.0",
       description: "A RFC 2397 URI parser for Elixir",
       elixir: "~> 1.0",
       build_embedded: Mix.env == :prod,
