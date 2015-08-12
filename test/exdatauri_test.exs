@@ -2,7 +2,8 @@ defmodule ExDataURITest do
   use ExUnit.Case, async: true
 
   test "base64" do
-    assert ExDataURI.parse("data:image/gif;base64,#{Base.encode64 "foo"}") == {:ok, "image/gif", "foo"}
+    assert ExDataURI.parse("data:image/gif;base64,#{Base.encode64 "foo"}") ==
+      {:ok, "image/gif", "foo"}
   end
 
   test "implicit mediatype and encoding" do
@@ -10,19 +11,23 @@ defmodule ExDataURITest do
   end
 
   test "implicit encoding" do
-    assert ExDataURI.parse("data:image/gif,#{URI.encode("foé")}") == {:ok, "image/gif", "foé"}
+    assert ExDataURI.parse("data:image/gif,#{URI.encode("foé")}") ==
+      {:ok, "image/gif", "foé"}
   end
 
   test "implicit mediatype" do
-    assert ExDataURI.parse("data:;base64,#{Base.encode64("foo")}") == {:ok, "text/plain", "foo"}
+    assert ExDataURI.parse("data:;base64,#{Base.encode64("foo")}") ==
+      {:ok, "text/plain", "foo"}
   end
 
   test "explicit charset" do
-    assert ExDataURI.parse(<<"data:text/plain;charset=iso-8859-15,", 233>>) == {:ok, "text/plain", "é"}
+    assert ExDataURI.parse(<<"data:text/plain;charset=iso-8859-15,", 233>>) ==
+      {:ok, "text/plain", "é"}
   end
 
   test "explicit charset, no mediatype" do
-    assert ExDataURI.parse(<<"data:charset=iso-8859-15,", 233>>) == {:ok, "text/plain", "é"}
+    assert ExDataURI.parse(<<"data:charset=iso-8859-15,", 233>>) ==
+      {:ok, "text/plain", "é"}
   end
 
   test "unsupported mediatype parameters" do
@@ -46,10 +51,26 @@ defmodule ExDataURITest do
   end
 
   test "invalid encode charset conversion" do
-    assert {:error, _} = ExDataURI.encode(<<233>>, "text/plain", "latin1", :urlenc, "utf8")
+    assert {:error, _} = ExDataURI.encode(
+        <<233>>, "text/plain", "latin1", :urlenc, "utf8")
   end
 
   test "invalid payload encoding" do
     assert {:error, _} = ExDataURI.encode("foo", "text/plain", "utf8", :unknown)
+  end
+
+  test "parse_metadata()" do
+    assert ExDataURI.parse_metadata("data:image/gif;base64,#{Base.encode64 "foo"}") ==
+      {:ok, "image/gif", nil, :base64}
+    assert ExDataURI.parse_metadata("data:,foo") ==
+      {:ok, "text/plain", nil, :urlenc}
+    assert ExDataURI.parse_metadata("data:image/gif,#{URI.encode("foé")}") ==
+      {:ok, "image/gif", nil, :urlenc}
+    assert ExDataURI.parse_metadata("data:;base64,#{Base.encode64("foo")}") ==
+      {:ok, "text/plain", nil, :base64}
+    assert ExDataURI.parse_metadata(<<"data:text/plain;charset=iso-8859-15,", 233>>) ==
+      {:ok, "text/plain", "iso-8859-15", :urlenc}
+    assert ExDataURI.parse_metadata(<<"data:charset=iso-8859-15,", 233>>) ==
+      {:ok, "text/plain", "iso-8859-15", :urlenc}
   end
 end

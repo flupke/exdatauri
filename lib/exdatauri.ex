@@ -69,7 +69,7 @@ defmodule ExDataURI do
   end
 
   @doc """
-  Parse RFC 2397 `uri`.
+  Parse a RFC 2397 URI.
 
   Return values:
     * `{:ok, mediatype, data}` - where `mediatype` is the one given in the
@@ -81,7 +81,7 @@ defmodule ExDataURI do
     if String.contains?(data, ",") do
       [metadata, payload] = String.split(data, ",", parts: 2)
       case parse_metadata(metadata) do
-        {mediatype, charset, payload_encoding} ->
+        {:ok, mediatype, charset, payload_encoding} ->
           case decode_payload(charset, payload_encoding, payload) do
             {:ok, payload} ->
               {:ok, mediatype, payload}
@@ -99,7 +99,18 @@ defmodule ExDataURI do
     {:error, "malformed RFC 2397 URI, missing \"data:\" prefix"}
   end
 
-  defp parse_metadata(metadata) do
+  @doc """
+  Only parse metadata of an RFC 2397 URI.
+
+  Return values:
+    * `{:ok, mediatype, charset, payload_encoding}`
+    * `{:error, reason}`
+  """
+  def parse_metadata("data:" <> rest) do
+    [metadata, _payload] = String.split(rest, ",", parts: 2)
+    parse_metadata(metadata)
+  end
+  def parse_metadata(metadata) do
     if String.ends_with?(metadata, ";base64") do
       metadata = String.slice(metadata, 0..-8)
       payload_encoding = :base64
@@ -108,7 +119,7 @@ defmodule ExDataURI do
     end
     case parse_mediatype(metadata) do
       {:ok, mediatype, charset} ->
-        {mediatype, charset, payload_encoding}
+        {:ok, mediatype, charset, payload_encoding}
       {:error, reason} ->
         {:error, reason}
     end
